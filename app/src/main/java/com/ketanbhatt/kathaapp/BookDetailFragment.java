@@ -82,7 +82,7 @@ public class BookDetailFragment extends Fragment {
 
             String book_dir_path = Environment.getExternalStorageDirectory() + "/" +
                     Constants.DIRECTORY_NAME + "/" + mItem.name;
-
+            System.out.println(book_dir_path);
             mWebView.loadUrl("file://" + book_dir_path + "/index.html");
         }
 

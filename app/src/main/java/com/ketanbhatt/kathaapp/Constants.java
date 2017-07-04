@@ -6,5 +6,5 @@ package com.ketanbhatt.kathaapp;
 
 public class Constants {
     public static final String DIRECTORY_NAME = "katha_books";
-    public static final int READ_EXTERNAL_STORAGE_PERMISSION = 1;
+    public static final int READ_WRITE_EXTERNAL_STORAGE_PERMISSION = 1;
 }

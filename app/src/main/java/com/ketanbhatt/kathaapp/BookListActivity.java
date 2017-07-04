@@ -1,10 +1,12 @@
 package com.ketanbhatt.kathaapp;
 
 import android.Manifest;
+import android.app.DownloadManager;
 import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.net.Uri;
+import android.os.Build;
 import android.os.Bundle;
 import android.os.Environment;
 import android.provider.Settings;
@@ -71,17 +73,27 @@ public class BookListActivity extends AppCompatActivity {
             mTwoPane = true;
         }
 
-        if (ContextCompat.checkSelfPermission(
-                BookListActivity.this, Manifest.permission.READ_EXTERNAL_STORAGE
-        ) != PackageManager.PERMISSION_GRANTED) {
+        if (
+                ContextCompat.checkSelfPermission(
+                                BookListActivity.this, Manifest.permission.READ_EXTERNAL_STORAGE
+                        ) != PackageManager.PERMISSION_GRANTED  ||
+                        ContextCompat.checkSelfPermission(
+                        BookListActivity.this, Manifest.permission.WRITE_EXTERNAL_STORAGE
+                ) != PackageManager.PERMISSION_GRANTED) {
+
             if (ActivityCompat.shouldShowRequestPermissionRationale
-                    (BookListActivity.this, Manifest.permission.READ_EXTERNAL_STORAGE)) {
+                    (BookListActivity.this, Manifest.permission.READ_EXTERNAL_STORAGE) ||
+                    ActivityCompat.shouldShowRequestPermissionRationale
+                    (BookListActivity.this, Manifest.permission.WRITE_EXTERNAL_STORAGE)) {
                 // Dont understand right now
             }
 
             ActivityCompat.requestPermissions(
-                    BookListActivity.this, new String[]{Manifest.permission.READ_EXTERNAL_STORAGE},
-                    Constants.READ_EXTERNAL_STORAGE_PERMISSION
+                    BookListActivity.this, new String[]{
+                            Manifest.permission.READ_EXTERNAL_STORAGE,
+                            Manifest.permission.WRITE_EXTERNAL_STORAGE
+                    },
+                    Constants.READ_WRITE_EXTERNAL_STORAGE_PERMISSION
             );
 
         } else {
@@ -173,6 +185,25 @@ public class BookListActivity extends AppCompatActivity {
                     public void onClick(View view) {
                         Snackbar.make(view, "Your book will download now", Snackbar.LENGTH_LONG)
                                 .setAction("Action", null).show();
+
+                        String DownloadUrl = "http://www.pdf995.com/samples/pdf.pdf";
+                        DownloadManager.Request request = new DownloadManager.Request(
+                                Uri.parse(DownloadUrl)
+                        );
+
+                        request.setDescription("sample pdf file for testing");
+                        request.setTitle("Sample.pdf");
+
+                        request.allowScanningByMediaScanner();
+                        request.setNotificationVisibility(
+                                DownloadManager.Request.VISIBILITY_VISIBLE_NOTIFY_COMPLETED
+                        );
+
+                        request.setDestinationInExternalPublicDir(Constants.DIRECTORY_NAME, "sample.pdf");
+
+                        // get download service and enqueue file
+                        DownloadManager manager = (DownloadManager) getSystemService(Context.DOWNLOAD_SERVICE);
+                        manager.enqueue(request);
                     }
                 });
             }
@@ -209,7 +240,7 @@ public class BookListActivity extends AppCompatActivity {
                                            @NonNull String permissions[],
                                            @NonNull int[] grantResults) {
         switch (requestCode) {
-            case Constants.READ_EXTERNAL_STORAGE_PERMISSION: {
+            case Constants.READ_WRITE_EXTERNAL_STORAGE_PERMISSION: {
                 if ((grantResults.length > 0) &&
                         (grantResults[0] == PackageManager.PERMISSION_GRANTED)) {
                     View recyclerView = findViewById(R.id.book_list);
