@@ -29,5 +29,7 @@
                 android:value="com.ketanbhatt.kathaapp.BookListActivity" />
         </activity>
     </application>
+    <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
+    <uses-permission android:name="android.permission.INTERNET" />
 
 </manifest>
