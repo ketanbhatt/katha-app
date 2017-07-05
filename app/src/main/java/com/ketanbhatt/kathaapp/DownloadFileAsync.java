@@ -74,7 +74,12 @@ public class DownloadFileAsync extends AsyncTask<String, String, String> {
             long total = 0;
             while ((count = input.read(data)) != -1) {
                 total += count;
-                publishProgress(""+(int)((total*100)/lenghtOfFile));
+
+                Integer progress = (int)((total*100)/lenghtOfFile);
+                if (progress % 5 == 0) {
+                    publishProgress("" + progress);
+                }
+
                 output.write(data, 0, count);
             }
 
@@ -94,9 +99,14 @@ public class DownloadFileAsync extends AsyncTask<String, String, String> {
 
     @Override
     protected void onPostExecute(String unused) {
-        mBuilder.setContentTitle("Book Downloaded")
-                .setContentText("Download Complete");
+        mNotifyManager.cancel(notif_id);
 
+        mNotifyManager = (NotificationManager) this.context.getSystemService(Context.NOTIFICATION_SERVICE);
+        mBuilder = new NotificationCompat.Builder(this.context);
+        mBuilder.setContentTitle("Book Downloaded")
+                .setContentText("Downloading Complete")
+                .setSmallIcon(R.mipmap.ic_launcher)
+                .setProgress(100, 100, false);
         mNotifyManager.notify(notif_id, mBuilder.build());
 
         if(callback != null) callback.downloadDone(file);
