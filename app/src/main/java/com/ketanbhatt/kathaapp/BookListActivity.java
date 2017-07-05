@@ -18,6 +18,7 @@ import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -186,28 +187,31 @@ public class BookListActivity extends AppCompatActivity {
                         Snackbar.make(view, "Your book will download now", Snackbar.LENGTH_LONG)
                                 .setAction("Action", null).show();
 
-                        String DownloadUrl = "http://www.pdf995.com/samples/pdf.pdf";
-                        DownloadManager.Request request = new DownloadManager.Request(
-                                Uri.parse(DownloadUrl)
-                        );
-
-                        request.setDescription("sample pdf file for testing");
-                        request.setTitle("Sample.pdf");
-
-                        request.allowScanningByMediaScanner();
-                        request.setNotificationVisibility(
-                                DownloadManager.Request.VISIBILITY_VISIBLE_NOTIFY_COMPLETED
-                        );
-
-                        request.setDestinationInExternalPublicDir(Constants.DIRECTORY_NAME, "sample.pdf");
-
-                        // get download service and enqueue file
-                        DownloadManager manager = (DownloadManager) getSystemService(Context.DOWNLOAD_SERVICE);
-                        manager.enqueue(request);
+                        downloadAndUnzipContent(holder.mItem.name);
                     }
                 });
             }
 
+        }
+
+        private void downloadAndUnzipContent(String name){
+            final String TAG ="downloadAndUnzipContent";
+            final String book_dir_path = Environment.getExternalStorageDirectory() + "/" + Constants.DIRECTORY_NAME + "/";
+            String url = "https://www.dropbox.com/s/p5vvud75wci87jq/book%201.zip?dl=1";
+
+            DownloadFileAsync download = new DownloadFileAsync(book_dir_path + name + ".zip", getApplicationContext(), new DownloadFileAsync.PostDownload(){
+                @Override
+                public void downloadDone(File file) {
+                    Log.i(TAG, "file download completed");
+
+                    // check unzip file now
+                    Decompress unzip = new Decompress(getApplicationContext(), file);
+                    unzip.unzip(book_dir_path + "/");
+
+                    Log.i(TAG, "file unzip completed");
+                }
+            });
+            download.execute(url);
         }
 
         @Override
