@@ -202,7 +202,7 @@ public class BookListActivity extends AppCompatActivity {
 
             DownloadFileAsync download = new DownloadFileAsync(book_dir_path + name + ".zip", getApplicationContext(), new DownloadFileAsync.PostDownload(){
                 @Override
-                public void downloadDone(File file) {
+                public void onDownloadComplete(File file) {
                     Log.i(TAG, "file download completed");
 
                     // check unzip file now
