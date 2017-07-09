@@ -99,6 +99,18 @@ public class BookDetailFragment extends Fragment {
                     Constants.DIRECTORY_NAME + "/" + mItem.name;
             System.out.println(book_dir_path);
             mWebView.loadUrl("file://" + book_dir_path + "/index.html");
+            rootView.findViewById(R.id.tv_next).setOnClickListener(new View.OnClickListener(){
+                @Override
+                public void onClick(View view) {
+
+                }
+            });
+            rootView.findViewById(R.id.tv_previous).setOnClickListener(new View.OnClickListener(){
+                @Override
+                public void onClick(View view) {
+
+                }
+            });
         }
 
         return rootView;
