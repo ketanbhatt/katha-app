@@ -53,7 +53,7 @@ public class TocParser {
             "</navMap>\n" +
             "</ncx>\n";
 
-    public static List<TOCItem> processXML() throws Exception {
+    public static List<TOCItem> processXML(){
         DocumentBuilderFactory documentBuilderFactory = DocumentBuilderFactory
                 .newInstance();
         DocumentBuilder documentBuilder;
