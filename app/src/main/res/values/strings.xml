@@ -1,4 +1,17 @@
 <resources>
     <string name="app_name">Katha App</string>
     <string name="title_book_detail">Book Detail</string>
+
+    <!--Required for accessibility-->
+    <string name="navigation_drawer_open">Open navigation drawer</string>
+    <string name="navigation_drawer_close">Close navigation drawer</string>
+
+    <!-- Navigation Drawer menu labels -->
+    <string name="nav_home">Home</string>
+    <string name="nav_donate">Donate</string>
+    <string name="nav_about">About</string>
+
+    <!-- TODO: Remove or change this placeholder text -->
+    <string name="hello_blank_fragment">Hello blank fragment</string>
+
 </resources>

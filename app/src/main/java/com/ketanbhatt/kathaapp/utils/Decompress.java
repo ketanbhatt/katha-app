@@ -1,4 +1,4 @@
-package com.ketanbhatt.kathaapp;
+package com.ketanbhatt.kathaapp.utils;
 
 /**
  * Created by ktbt on 05/07/17.
@@ -9,7 +9,6 @@ import android.util.Log;
 
 import java.io.ByteArrayOutputStream;
 import java.io.File;
-import java.io.FileDescriptor;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.InputStream;

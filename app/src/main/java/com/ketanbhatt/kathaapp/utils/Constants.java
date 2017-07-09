@@ -1,4 +1,4 @@
-package com.ketanbhatt.kathaapp;
+package com.ketanbhatt.kathaapp.utils;
 
 /**
  * Created by ktbt on 04/07/17.

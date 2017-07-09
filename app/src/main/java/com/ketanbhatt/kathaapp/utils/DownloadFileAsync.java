@@ -1,4 +1,4 @@
-package com.ketanbhatt.kathaapp;
+package com.ketanbhatt.kathaapp.utils;
 
 /**
  * Created by ktbt on 05/07/17.
@@ -10,6 +10,8 @@ import android.os.AsyncTask;
 import android.support.v4.app.NotificationCompat;
 import android.util.Log;
 
+import com.ketanbhatt.kathaapp.R;
+
 import java.io.BufferedInputStream;
 import java.io.File;
 import java.io.FileOutputStream;
@@ -18,8 +20,7 @@ import java.io.InputStream;
 import java.net.HttpURLConnection;
 import java.net.URL;
 
-/** package **/
-class DownloadFileAsync extends AsyncTask<String, Integer, File> {
+public class DownloadFileAsync extends AsyncTask<String, Integer, File> {
 
     private static final String TAG = DownloadFileAsync.class.getSimpleName();
 
@@ -31,7 +32,7 @@ class DownloadFileAsync extends AsyncTask<String, Integer, File> {
     private NotificationManager mNotifyManager;
     private NotificationCompat.Builder mBuilder;
 
-    DownloadFileAsync(String downloadLocation, Context context, PostDownload callback) {
+    public DownloadFileAsync(String downloadLocation, Context context, PostDownload callback) {
         this.context = context;
         this.callback = callback;
         this.downloadLocation = downloadLocation;
@@ -136,7 +137,7 @@ class DownloadFileAsync extends AsyncTask<String, Integer, File> {
         mNotifyManager.notify(mNotifId, mBuilder.build());
     }
 
-    interface PostDownload {
+    public interface PostDownload {
         void onDownloadComplete(File fd);
 
         void onDownloadFailure();
