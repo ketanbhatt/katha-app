@@ -8,7 +8,7 @@ import android.os.Environment;
 import android.support.annotation.Nullable;
 import android.support.design.widget.Snackbar;
 import android.support.v4.app.Fragment;
-import android.support.v7.widget.LinearLayoutManager;
+import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -25,6 +25,7 @@ import com.ketanbhatt.kathaapp.books.BookItem;
 import com.ketanbhatt.kathaapp.utils.Constants;
 import com.ketanbhatt.kathaapp.utils.Decompress;
 import com.ketanbhatt.kathaapp.utils.DownloadFileAsync;
+import com.ketanbhatt.kathaapp.utils.GridSpacingItemDecoration;
 
 import java.io.File;
 import java.util.List;
@@ -60,7 +61,8 @@ public class BookListFragment extends Fragment {
     @Override
     public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
-        booksRV.setLayoutManager(new LinearLayoutManager(getActivity()));
+        booksRV.setLayoutManager(new GridLayoutManager(getActivity(), 2));
+        booksRV.addItemDecoration(new GridSpacingItemDecoration(2, getResources().getDimensionPixelSize(R.dimen.text_margin), true));
         setupRecyclerView();
     }
 
@@ -79,7 +81,7 @@ public class BookListFragment extends Fragment {
                             AvailableBooks.setOffline(book.getName());
                         }
                     }
-                }else booksDir.mkdir();
+                } else booksDir.mkdir();
                 if (onlyOfflineBooks)
                     return AvailableBooks.getOfflineBooks();
                 else return AvailableBooks.ITEMS;
@@ -106,9 +108,7 @@ public class BookListFragment extends Fragment {
             public void onItemClick(int position) {
                 BookItem book = items.get(position);
                 if (book.isOffline) {
-                    Intent intent = new Intent(context, BookDetailActivity.class);
-                    intent.putExtra(BookDetailFragment.ARG_BOOK_NAME, book.name);
-                    context.startActivity(intent);
+                    openDetails(book);
                 } else {
                     Snackbar.make(rootView, "Your book will download now", Snackbar.LENGTH_LONG)
                             .setAction("Action", null).show();
@@ -135,10 +135,8 @@ public class BookListFragment extends Fragment {
 
         @Override
         public void onBindViewHolder(final ViewHolder holder, int position) {
-            BookItem item = items.get(position);
             holder.nameTV.setText(items.get(position).name);
             holder.detailsTV.setText(items.get(position).details);
-            holder.mButtonView.setText(item.isOffline ? "Read" : "Download");
         }
 
         private void downloadAndUnzipContent(final BookItem bookItem, final int position) {
@@ -157,8 +155,7 @@ public class BookListFragment extends Fragment {
 
                     Log.i(TAG, "file unzip completed");
                     bookItem.isOffline = true;
-                    notifyItemChanged(position);
-
+                    openDetails(bookItem);
                 }
 
                 @Override
@@ -169,6 +166,12 @@ public class BookListFragment extends Fragment {
             download.execute(url);
         }
 
+        private void openDetails(BookItem book) {
+            Intent intent = new Intent(context, BookDetailActivity.class);
+            intent.putExtra(BookDetailFragment.ARG_BOOK_NAME, book.name);
+            context.startActivity(intent);
+        }
+
         @Override
         public int getItemCount() {
             return items == null ? 0 : items.size();
@@ -177,7 +180,6 @@ public class BookListFragment extends Fragment {
         class ViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener {
             TextView nameTV;
             TextView detailsTV;
-            TextView mButtonView;
 
             OnItemClickListener onItemClickListener;
 
@@ -186,8 +188,7 @@ public class BookListFragment extends Fragment {
                 this.onItemClickListener = onItemClickListener;
                 nameTV = view.findViewById(R.id.tv_name);
                 detailsTV = view.findViewById(R.id.tv_details);
-                mButtonView = view.findViewById(R.id.button);
-                mButtonView.setOnClickListener(this);
+                itemView.setOnClickListener(this);
             }
 
             @Override
