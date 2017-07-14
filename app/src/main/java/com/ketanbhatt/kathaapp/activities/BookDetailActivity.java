@@ -44,7 +44,7 @@ public class BookDetailActivity extends AppCompatActivity {
             Bundle arguments = new Bundle();
             arguments.putString(BookDetailFragment.ARG_BOOK_NAME,
                     getIntent().getStringExtra(BookDetailFragment.ARG_BOOK_NAME));
-             fragment = new BookDetailFragment();
+            fragment = new BookDetailFragment();
             fragment.setArguments(arguments);
             getSupportFragmentManager().beginTransaction()
                     .add(R.id.book_detail_container, fragment)
@@ -64,7 +64,7 @@ public class BookDetailActivity extends AppCompatActivity {
 
     @Override
     public void onBackPressed() {
-        if (fragment != null && fragment.isAdded() && !fragment.onBackPressed())
+//        if (fragment != null && fragment.isAdded() && !fragment.onBackPressed())
             super.onBackPressed();
     }
 }

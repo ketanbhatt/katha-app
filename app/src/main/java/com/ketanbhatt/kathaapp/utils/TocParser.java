@@ -1,5 +1,7 @@
 package com.ketanbhatt.kathaapp.utils;
 
+import android.util.Log;
+
 import org.w3c.dom.Document;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
@@ -17,6 +19,8 @@ import javax.xml.parsers.DocumentBuilderFactory;
  */
 
 public class TocParser {
+
+    private static final String TAG = "TocParser";
 
     private static String tocSample = "<?xml version=\"1.0\" encoding=\"utf-8\" standalone=\"no\"?>\n" +
             "<ncx version=\"2005-1\" xmlns=\"http://www.daisy.org/z3986/2005/ncx/\">\n" +
@@ -53,7 +57,7 @@ public class TocParser {
             "</navMap>\n" +
             "</ncx>\n";
 
-    public static List<TOCItem> processXML(){
+    public static List<TOCItem> processXML(String xmlFile) {
         DocumentBuilderFactory documentBuilderFactory = DocumentBuilderFactory
                 .newInstance();
         DocumentBuilder documentBuilder;
@@ -62,7 +66,7 @@ public class TocParser {
             documentBuilder = documentBuilderFactory
                     .newDocumentBuilder();
             xmlDocument = documentBuilder.parse(new ByteArrayInputStream(
-                    tocSample.getBytes(Charset.forName("UTF-8"))));
+                    xmlFile.getBytes(Charset.forName("UTF-8"))));
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -87,6 +91,7 @@ public class TocParser {
                     }
                     tocItems.add(new TOCItem(id, playOrder, title, source));
                 }
+                Log.d(TAG, "processXML: " + tocItems.get(4).title + "^^^^" + tocItems.get(4).source);
                 return tocItems;
 
             }
@@ -96,11 +101,11 @@ public class TocParser {
         return null;
     }
 
-    private static class TOCItem {
-        String id;
-        String playOrder;
-        String title;
-        String source;
+    public static class TOCItem {
+        public String id;
+        public String playOrder;
+        public String title;
+        public String source;
 
         TOCItem(String id, String playOrder, String title, String source) {
             this.id = id;

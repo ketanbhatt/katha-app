@@ -20,6 +20,7 @@ import android.widget.TextView;
 
 import com.ketanbhatt.kathaapp.R;
 import com.ketanbhatt.kathaapp.activities.BookDetailActivity;
+import com.ketanbhatt.kathaapp.activities.BookToc;
 import com.ketanbhatt.kathaapp.books.AvailableBooks;
 import com.ketanbhatt.kathaapp.books.BookItem;
 import com.ketanbhatt.kathaapp.utils.Constants;
@@ -167,8 +168,11 @@ public class BookListFragment extends Fragment {
         }
 
         private void openDetails(BookItem book) {
-            Intent intent = new Intent(context, BookDetailActivity.class);
-            intent.putExtra(BookDetailFragment.ARG_BOOK_NAME, book.name);
+//            Intent intent = new Intent(context, BookDetailActivity.class);
+//            intent.putExtra(BookDetailFragment.ARG_BOOK_NAME, book.name);
+//            context.startActivity(intent);
+            Intent intent = new Intent(context, BookToc.class);
+            intent.putExtra("BookName", book.name);
             context.startActivity(intent);
         }
 

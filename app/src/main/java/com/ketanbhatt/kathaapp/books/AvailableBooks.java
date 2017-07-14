@@ -37,9 +37,9 @@ public class AvailableBooks {
         }
     }
 
-    public static List<BookItem> getOfflineBooks(){
+    public static List<BookItem> getOfflineBooks() {
         List<BookItem> bookItems = new ArrayList<>();
-        for (BookItem bookItem: ITEMS){
+        for (BookItem bookItem : ITEMS) {
             if (bookItem.isOffline)
                 bookItems.add(bookItem);
         }

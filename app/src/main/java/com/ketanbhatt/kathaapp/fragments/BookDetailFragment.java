@@ -1,11 +1,13 @@
 package com.ketanbhatt.kathaapp.fragments;
 
+import android.content.Intent;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.Environment;
 import android.support.v4.app.Fragment;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -15,10 +17,19 @@ import android.webkit.WebViewClient;
 
 import com.ketanbhatt.kathaapp.R;
 import com.ketanbhatt.kathaapp.activities.BookDetailActivity;
+import com.ketanbhatt.kathaapp.activities.BookToc;
 import com.ketanbhatt.kathaapp.activities.MainActivity;
 import com.ketanbhatt.kathaapp.books.AvailableBooks;
 import com.ketanbhatt.kathaapp.books.BookItem;
 import com.ketanbhatt.kathaapp.utils.Constants;
+import com.ketanbhatt.kathaapp.utils.TocParser;
+
+import java.io.BufferedReader;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.IOException;
+import java.io.InputStreamReader;
+import java.util.List;
 
 /**
  * A fragment representing a single Book detail screen.
@@ -28,6 +39,7 @@ import com.ketanbhatt.kathaapp.utils.Constants;
  */
 public class BookDetailFragment extends Fragment {
 
+    private static final String TAG = "BookDetailFragment";
     private WebView mWebView;
 
     /**
@@ -40,11 +52,16 @@ public class BookDetailFragment extends Fragment {
      * The dummy content this fragment is presenting.
      */
     private BookItem mItem;
+    String pageSource;
+    int playOrder;
 
     /**
      * Mandatory empty constructor for the fragment manager to instantiate the
      * fragment (e.g. upon screen orientation changes).
      */
+
+    int pageNo;
+
     public BookDetailFragment() {
     }
 
@@ -56,8 +73,14 @@ public class BookDetailFragment extends Fragment {
             // Load the dummy content specified by the fragment
             // arguments. In a real-world scenario, use a Loader
             // to load content from a content provider.
-            mItem = AvailableBooks.ITEM_MAP.get(getArguments().getString(ARG_BOOK_NAME));
 
+            Intent i = getActivity().getIntent();
+            pageSource = i.getStringExtra("pageSource");
+            playOrder = Integer.parseInt(i.getStringExtra("order"));
+
+            Log.d(TAG, "onCreate: " + playOrder);
+
+            mItem = AvailableBooks.ITEM_MAP.get(getArguments().getString(ARG_BOOK_NAME));
             AppCompatActivity activity = (AppCompatActivity) this.getActivity();
             ActionBar actionBar = activity.getSupportActionBar();
             if (actionBar != null) {
@@ -73,7 +96,7 @@ public class BookDetailFragment extends Fragment {
 
         // Show the dummy content as text in a TextView.
         if (mItem != null) {
-             mWebView = rootView.findViewById(R.id.book_webview);
+            mWebView = rootView.findViewById(R.id.book_webview);
 
             // Enable Javascript
             WebSettings webSettings = mWebView.getSettings();
@@ -95,20 +118,57 @@ public class BookDetailFragment extends Fragment {
             webSettings.setLoadWithOverviewMode(true);
             webSettings.setUseWideViewPort(true);
 
-            String book_dir_path = Environment.getExternalStorageDirectory() + "/" +
+            final String book_dir_path = Environment.getExternalStorageDirectory() + "/" +
                     Constants.DIRECTORY_NAME + "/" + mItem.name;
             System.out.println(book_dir_path);
-            mWebView.loadUrl("file://" + book_dir_path + "/index.html");
-            rootView.findViewById(R.id.tv_next).setOnClickListener(new View.OnClickListener(){
+
+            File extStore = Environment.getExternalStorageDirectory();
+            File myFile = new File(extStore.getAbsolutePath() + "/" + Constants.DIRECTORY_NAME + "/" + mItem.name + "/b1/toc.xml");
+
+
+            //Parsing the XML
+            StringBuilder sb = null;
+
+            try {
+                FileInputStream fis = new FileInputStream(myFile);
+                InputStreamReader isr = new InputStreamReader(fis, "UTF-8");
+                BufferedReader bufferedReader = new BufferedReader(isr);
+                sb = new StringBuilder();
+                String line;
+                while ((line = bufferedReader.readLine()) != null) {
+                    sb.append(line).append("\n");
+                }
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+
+
+            final List<TocParser.TOCItem> tocItems = TocParser.processXML(sb.toString());
+
+//            mWebView.loadUrl("file://" + book_dir_path + "/b1/" + tocItems.get(0).source);
+            mWebView.loadUrl("file://" + book_dir_path + "/b1/" + pageSource);
+
+            pageNo = playOrder;
+            rootView.findViewById(R.id.tv_next).setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View view) {
-
+                    pageNo++;
+                    if (pageNo < tocItems.size()) {
+                        mWebView.loadUrl("file://" + book_dir_path + "/b1/" + tocItems.get(pageNo).source);
+                    } else {
+                        pageNo--;
+                    }
                 }
             });
-            rootView.findViewById(R.id.tv_previous).setOnClickListener(new View.OnClickListener(){
+            rootView.findViewById(R.id.tv_previous).setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View view) {
-
+                    pageNo--;
+                    if (pageNo >= 0 && pageNo < tocItems.size()) {
+                        mWebView.loadUrl("file://" + book_dir_path + "/b1/" + tocItems.get(pageNo).source);
+                    } else {
+                        pageNo++;
+                    }
                 }
             });
         }
@@ -116,13 +176,16 @@ public class BookDetailFragment extends Fragment {
         return rootView;
     }
 
-    public boolean onBackPressed() {
-        if (mWebView.canGoBack()) {
-            mWebView.goBack();
-            return true;
-        } else {
-            return false;
-        }
-    }
+
+//    public void onBackPressed() {
+//        startActivity(new Intent(getActivity(), BookToc.class));
+//        if (mWebView.canGoBack()) {
+//            mWebView.goBack();
+//            return true;
+//        } else {
+//            return false;
+//        }
+//
+//    }
 
 }

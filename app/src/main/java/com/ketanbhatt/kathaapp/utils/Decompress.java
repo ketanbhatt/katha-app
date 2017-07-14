@@ -37,10 +37,10 @@ public class Decompress {
     }
 
     public void unzip(String location) {
-        try  {
+        try {
             Log.i(TAG, "Starting to unzip");
             InputStream fin = _zipFileStream;
-            if(fin == null) {
+            if (fin == null) {
                 fin = new FileInputStream(_zipFile);
             }
             ZipInputStream zin = new ZipInputStream(fin);
@@ -51,7 +51,7 @@ public class Decompress {
             while ((ze = zin.getNextEntry()) != null) {
                 Log.v(TAG, "Unzipping " + ze.getName());
 
-                if(ze.isDirectory()) {
+                if (ze.isDirectory()) {
                     _dirChecker(location + "/" + ze.getName());
                 } else {
                     FileOutputStream fout = new FileOutputStream(new File(location, ze.getName()));
@@ -60,8 +60,7 @@ public class Decompress {
                     int count;
 
                     // reading and writing
-                    while((count = zin.read(buffer)) != -1)
-                    {
+                    while ((count = zin.read(buffer)) != -1) {
                         baos.write(buffer, 0, count);
                         byte[] bytes = baos.toByteArray();
                         fout.write(bytes);
@@ -75,7 +74,7 @@ public class Decompress {
             }
             zin.close();
             Log.i(TAG, "Finished unzip");
-        } catch(Exception e) {
+        } catch (Exception e) {
             Log.e(TAG, "Unzip Error", e);
         }
 
@@ -85,7 +84,7 @@ public class Decompress {
         File f = new File(dir);
         Log.i(TAG, "creating dir " + dir);
 
-        if(dir.length() >= 0 && !f.isDirectory() ) {
+        if (dir.length() >= 0 && !f.isDirectory()) {
             f.mkdirs();
         }
     }
