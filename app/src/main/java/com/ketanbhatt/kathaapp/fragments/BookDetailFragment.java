@@ -123,7 +123,7 @@ public class BookDetailFragment extends Fragment {
             System.out.println(book_dir_path);
 
             File extStore = Environment.getExternalStorageDirectory();
-            File myFile = new File(extStore.getAbsolutePath() + "/" + Constants.DIRECTORY_NAME + "/" + mItem.name + "/b1/toc.xml");
+            File myFile = new File(extStore.getAbsolutePath() + "/" + Constants.DIRECTORY_NAME + "/" + mItem.name + "/b1/toc.ncx");
 
 
             //Parsing the XML

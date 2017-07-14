@@ -34,6 +34,7 @@ public class BookToc extends AppCompatActivity {
 
     RecyclerView recyclerView;
     BookTocAdapter adapter;
+    List<TocParser.TOCItem> tocItems;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -50,8 +51,7 @@ public class BookToc extends AppCompatActivity {
         }
 
         File extStore = Environment.getExternalStorageDirectory();
-        File myFile = new File(extStore.getAbsolutePath() + "/" + Constants.DIRECTORY_NAME + "/" + mItem.name + "/b1/toc.xml");
-
+        File myFile = new File(extStore.getAbsolutePath() + "/" + Constants.DIRECTORY_NAME + "/" + mItem.name + "/b1/toc.ncx");
 
         //Parsing the XML
         StringBuilder sb = null;
@@ -65,12 +65,15 @@ public class BookToc extends AppCompatActivity {
             while ((line = bufferedReader.readLine()) != null) {
                 sb.append(line).append("\n");
             }
+            Log.d(TAG, "onCreate: " + sb.toString());
         } catch (IOException e) {
             e.printStackTrace();
         }
 
 
-        final List<TocParser.TOCItem> tocItems = TocParser.processXML(sb.toString());
+        if(sb != null) {
+            tocItems = TocParser.processXML(sb.toString());
+        }
 
         adapter = new BookTocAdapter(tocItems);
         RecyclerView.LayoutManager mLayoutManager = new LinearLayoutManager(BookToc.this);
